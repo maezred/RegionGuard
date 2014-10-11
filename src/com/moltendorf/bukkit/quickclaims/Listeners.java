@@ -71,6 +71,10 @@ public class Listeners implements Listener {
 	}
 
 	protected void setActiveFlagsOnRegion(ProtectedRegion region) {
+		if (region.getId().equals("__global__")) {
+			return;
+		}
+
 		CommandSender sender = plugin.getServer().getConsoleSender();
 		WorldGuardPlugin wg = WGBukkit.getPlugin();
 
@@ -106,6 +110,10 @@ public class Listeners implements Listener {
 	}
 
 	protected void setInactiveFlagsOnRegion(ProtectedRegion region) {
+		if (region.getId().equals("__global__")) {
+			return;
+		}
+
 		CommandSender sender = plugin.getServer().getConsoleSender();
 		WorldGuardPlugin wg = WGBukkit.getPlugin();
 
