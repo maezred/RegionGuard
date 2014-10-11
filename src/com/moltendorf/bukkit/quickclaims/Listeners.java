@@ -41,7 +41,7 @@ public class Listeners implements Listener {
 			RegionManager manager = WGBukkit.getRegionManager(world);
 
 			for (ProtectedRegion region : manager.getApplicableRegions(location)) {
-				if (isPrivateRegion(region) || region.isMember(player.getName())) {
+				if (isPrivateRegion(region) && isMemberOfRegion(player, region)) {
 					players.put(world, region, player);
 				}
 			}
@@ -144,12 +144,30 @@ public class Listeners implements Listener {
 		return false;
 	}
 
+	protected boolean isMemberOfRegion(Player player, ProtectedRegion region) {
+		String playerName = player.getName();
+
+		do {
+			if (region.getMembers().getPlayers().contains(playerName)) {
+				return true;
+			}
+
+			if (region.getOwners().getPlayers().contains(playerName)) {
+				return true;
+			}
+
+			region = region.getParent();
+		} while (region != null);
+
+		return false;
+	}
+
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void RegionEnteredEventMonitor(final RegionEnteredEvent event) {
 		ProtectedRegion region = event.getRegion();
 		Player player = event.getPlayer();
 
-		if (isPrivateRegion(region) || region.isMember(player.getName())) {
+		if (isPrivateRegion(region) && isMemberOfRegion(player, region)) {
 			if (players.isEmpty(player.getWorld(), region)) {
 				setActiveFlagsOnRegion(region);
 
