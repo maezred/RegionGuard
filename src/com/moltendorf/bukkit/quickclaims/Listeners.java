@@ -59,12 +59,8 @@ public class Listeners implements Listener {
 
 				if (players.isEmpty(world, region)) {
 					setInactiveFlagsOnRegion(region);
-
-					System.out.println("Enabled protection on region " + region.getId() + " in world " + world.getName() + ".");
 				} else {
 					setActiveFlagsOnRegion(region);
-
-					System.out.println("Disabled protection on region " + region.getId() + " in world " + world.getName() + ".");
 				}
 			}
 		}
@@ -107,6 +103,8 @@ public class Listeners implements Listener {
 		} catch (InvalidFlagFormat invalidFlagFormat) {
 			invalidFlagFormat.printStackTrace();
 		}
+
+		System.out.println("Disabled protection on region " + region.getId() + ".");
 	}
 
 	protected void setInactiveFlagsOnRegion(ProtectedRegion region) {
@@ -146,6 +144,8 @@ public class Listeners implements Listener {
 		} catch (InvalidFlagFormat invalidFlagFormat) {
 			invalidFlagFormat.printStackTrace();
 		}
+
+		System.out.println("Enabled protection on region " + region.getId() + ".");
 	}
 
 	protected boolean isPrivateRegion(ProtectedRegion region) {
@@ -186,8 +186,6 @@ public class Listeners implements Listener {
 		if (isPrivateRegion(region) && isMemberOfRegion(player, region)) {
 			if (players.isEmpty(player.getWorld(), region)) {
 				setActiveFlagsOnRegion(region);
-
-				System.out.println("Disabled protection on region " + region.getId() + " in world " + player.getWorld().getName() + ".");
 			}
 
 			players.put(region, player);
@@ -208,8 +206,6 @@ public class Listeners implements Listener {
 
 			if (players.isEmpty(player.getWorld(), region)) {
 				setInactiveFlagsOnRegion(region);
-
-				System.out.println("Enabled protection on region " + region.getId() + " in world " + player.getWorld().getName() + ".");
 			}
 		} else {
 			System.out.println("Player " + player.getDisplayName() + " left region " + region.getId() + " in world " + player.getWorld().getName() + ".");
