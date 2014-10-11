@@ -1,0 +1,7 @@
+name: QuickClaims
+version: 1.0.0
+description: Claim and modify your World Guard regions with speed.
+author: moltendorf
+website: http://dev.bukkit.org/server-mods/moltendorf-quickclaims/
+main: com.moltendorf.bukkit.quickclaims.Plugin
+depend: [ WorldGuard, WGRegionEvents ]
