@@ -161,7 +161,7 @@ public class Listeners implements Listener {
 	}
 
 	protected boolean isMemberOfRegion(Player player, ProtectedRegion region) {
-		String playerName = player.getName();
+		String playerName = player.getName().toLowerCase();
 
 		do {
 			if (region.getMembers().getPlayers().contains(playerName)) {
