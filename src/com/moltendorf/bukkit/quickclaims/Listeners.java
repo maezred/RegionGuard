@@ -43,6 +43,10 @@ public class Listeners implements Listener {
 			for (ProtectedRegion region : manager.getApplicableRegions(location)) {
 				if (isPrivateRegion(region) && isMemberOfRegion(player, region)) {
 					players.put(world, region, player);
+
+					System.out.println("Member " + player.getDisplayName() + " entered region " + region.getId() + " in world " + world.getName() + ".");
+				} else {
+					System.out.println("Player " + player.getDisplayName() + " entered region " + region.getId() + " in world " + world.getName() + ".");
 				}
 			}
 		}
@@ -55,8 +59,12 @@ public class Listeners implements Listener {
 
 				if (players.isEmpty(world, region)) {
 					setInactiveFlagsOnRegion(region);
+
+					System.out.println("Enabled protection on region " + region.getId() + " in world " + world.getName() + ".");
 				} else {
 					setActiveFlagsOnRegion(region);
+
+					System.out.println("Disabled protection on region " + region.getId() + " in world " + world.getName() + ".");
 				}
 			}
 		}
@@ -171,14 +179,14 @@ public class Listeners implements Listener {
 			if (players.isEmpty(player.getWorld(), region)) {
 				setActiveFlagsOnRegion(region);
 
-				System.out.println("Disabled protection on region " + event.getRegion().getId() + " in world " + event.getPlayer().getWorld().getName() + ".");
+				System.out.println("Disabled protection on region " + region.getId() + " in world " + player.getWorld().getName() + ".");
 			}
 
 			players.put(region, player);
 
-			System.out.println("Member " + event.getPlayer().getDisplayName() + " entered region " + event.getRegion().getId() + " in world " + event.getPlayer().getWorld().getName() + ".");
+			System.out.println("Member " + player.getDisplayName() + " entered region " + region.getId() + " in world " + player.getWorld().getName() + ".");
 		} else {
-			System.out.println("Player " + event.getPlayer().getDisplayName() + " entered region " + event.getRegion().getId() + " in world " + event.getPlayer().getWorld().getName() + ".");
+			System.out.println("Player " + player.getDisplayName() + " entered region " + region.getId() + " in world " + player.getWorld().getName() + ".");
 		}
 	}
 
@@ -188,15 +196,15 @@ public class Listeners implements Listener {
 		Player player = event.getPlayer();
 
 		if (players.remove(region, player)) {
-			System.out.println("Member " + event.getPlayer().getDisplayName() + " left region " + event.getRegion().getId() + " in world " + event.getPlayer().getWorld().getName() + ".");
+			System.out.println("Member " + player.getDisplayName() + " left region " + region.getId() + " in world " + player.getWorld().getName() + ".");
 
 			if (players.isEmpty(player.getWorld(), region)) {
 				setInactiveFlagsOnRegion(region);
 
-				System.out.println("Enabled protection on region " + event.getRegion().getId() + " in world " + event.getPlayer().getWorld().getName() + ".");
+				System.out.println("Enabled protection on region " + region.getId() + " in world " + player.getWorld().getName() + ".");
 			}
 		} else {
-			System.out.println("Player " + event.getPlayer().getDisplayName() + " left region " + event.getRegion().getId() + " in world " + event.getPlayer().getWorld().getName() + ".");
+			System.out.println("Player " + player.getDisplayName() + " left region " + region.getId() + " in world " + player.getWorld().getName() + ".");
 		}
 	}
 }
