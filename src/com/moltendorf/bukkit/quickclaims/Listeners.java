@@ -9,6 +9,7 @@ import com.sk89q.worldguard.protection.flags.InvalidFlagFormat;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -216,14 +217,45 @@ public class Listeners implements Listener {
 		ProtectedRegion region = event.getRegion();
 		Player player = event.getPlayer();
 
-		if (isPrivateRegion(region) && isMemberOfRegion(player, region)) {
-			if (players.isEmpty(player.getWorld(), region)) {
-				setActiveFlagsOnRegion(region);
+		if (isPrivateRegion(region)) {
+			String message = region.getFlag(DefaultFlag.GREET_MESSAGE);
+
+			if (message == null) {
+				message = "&1[&C";
+
+				int count = 0;
+
+				for (String name : region.getOwners().getPlayers()) {
+					OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer(name);
+
+					if (offlinePlayer.getFirstPlayed() != 0) {
+						message += (count++ > 0 ? " " : " & ") + offlinePlayer.getName();
+					}
+				}
+
+				message += "'s Home &1]";
+
+				CommandSender sender = plugin.getServer().getConsoleSender();
+				WorldGuardPlugin wg = WGBukkit.getPlugin();
+
+				try {
+					region.setFlag(DefaultFlag.GREET_MESSAGE, DefaultFlag.GREET_MESSAGE.parseInput(wg, sender, message));
+				} catch (InvalidFlagFormat invalidFlagFormat) {
+					invalidFlagFormat.printStackTrace();
+				}
 			}
 
-			players.put(region, player);
+			if (isMemberOfRegion(player, region)) {
+				if (players.isEmpty(player.getWorld(), region)) {
+					setActiveFlagsOnRegion(region);
+				}
 
-			memberEnteredRegion(player, region);
+				players.put(region, player);
+
+				memberEnteredRegion(player, region);
+			} else {
+				playerEnteredRegion(player, region);
+			}
 		} else {
 			playerEnteredRegion(player, region);
 		}
