@@ -229,7 +229,7 @@ public class Listeners implements Listener {
 					OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer(name);
 
 					if (offlinePlayer.getFirstPlayed() != 0) {
-						message += (count++ > 0 ? " " : " & ") + offlinePlayer.getName();
+						message += (count++ == 0 ? " " : " & ") + offlinePlayer.getName();
 					}
 				}
 
