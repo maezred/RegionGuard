@@ -88,31 +88,41 @@ public class Listeners implements Listener {
 		WorldGuardPlugin wg = WGBukkit.getPlugin();
 
 		try {
-			region.setFlag(DefaultFlag.CREEPER_EXPLOSION, DefaultFlag.CREEPER_EXPLOSION.parseInput(wg, sender, "allow"));
+			if (!region.getFlag(DefaultFlag.CREEPER_EXPLOSION).toString().equals("ALLOW")) {
+				region.setFlag(DefaultFlag.CREEPER_EXPLOSION, DefaultFlag.CREEPER_EXPLOSION.parseInput(wg, sender, "ALLOW"));
+			}
 		} catch (InvalidFlagFormat invalidFlagFormat) {
 			invalidFlagFormat.printStackTrace();
 		}
 
 		try {
-			region.setFlag(DefaultFlag.ENDERDRAGON_BLOCK_DAMAGE, DefaultFlag.ENDERDRAGON_BLOCK_DAMAGE.parseInput(wg, sender, "allow"));
+			if (!region.getFlag(DefaultFlag.ENDERDRAGON_BLOCK_DAMAGE).toString().equals("ALLOW")) {
+				region.setFlag(DefaultFlag.ENDERDRAGON_BLOCK_DAMAGE, DefaultFlag.ENDERDRAGON_BLOCK_DAMAGE.parseInput(wg, sender, "ALLOW"));
+			}
 		} catch (InvalidFlagFormat invalidFlagFormat) {
 			invalidFlagFormat.printStackTrace();
 		}
 
 		try {
-			region.setFlag(DefaultFlag.ENDER_BUILD, DefaultFlag.ENDER_BUILD.parseInput(wg, sender, "allow"));
+			if (!region.getFlag(DefaultFlag.ENDER_BUILD).toString().equals("ALLOW")) {
+				region.setFlag(DefaultFlag.ENDER_BUILD, DefaultFlag.ENDER_BUILD.parseInput(wg, sender, "ALLOW"));
+			}
 		} catch (InvalidFlagFormat invalidFlagFormat) {
 			invalidFlagFormat.printStackTrace();
 		}
 
 		try {
-			region.setFlag(DefaultFlag.GHAST_FIREBALL, DefaultFlag.GHAST_FIREBALL.parseInput(wg, sender, "allow"));
+			if (!region.getFlag(DefaultFlag.GHAST_FIREBALL).toString().equals("ALLOW")) {
+				region.setFlag(DefaultFlag.GHAST_FIREBALL, DefaultFlag.GHAST_FIREBALL.parseInput(wg, sender, "ALLOW"));
+			}
 		} catch (InvalidFlagFormat invalidFlagFormat) {
 			invalidFlagFormat.printStackTrace();
 		}
 
 		try {
-			region.setFlag(DefaultFlag.OTHER_EXPLOSION, DefaultFlag.OTHER_EXPLOSION.parseInput(wg, sender, "allow"));
+			if (!region.getFlag(DefaultFlag.OTHER_EXPLOSION).toString().equals("ALLOW")) {
+				region.setFlag(DefaultFlag.OTHER_EXPLOSION, DefaultFlag.OTHER_EXPLOSION.parseInput(wg, sender, "ALLOW"));
+			}
 		} catch (InvalidFlagFormat invalidFlagFormat) {
 			invalidFlagFormat.printStackTrace();
 		}
@@ -129,31 +139,41 @@ public class Listeners implements Listener {
 		WorldGuardPlugin wg = WGBukkit.getPlugin();
 
 		try {
-			region.setFlag(DefaultFlag.CREEPER_EXPLOSION, DefaultFlag.CREEPER_EXPLOSION.parseInput(wg, sender, "deny"));
+			if (!region.getFlag(DefaultFlag.CREEPER_EXPLOSION).toString().equals("DENY")) {
+				region.setFlag(DefaultFlag.CREEPER_EXPLOSION, DefaultFlag.CREEPER_EXPLOSION.parseInput(wg, sender, "DENY"));
+			}
 		} catch (InvalidFlagFormat invalidFlagFormat) {
 			invalidFlagFormat.printStackTrace();
 		}
 
 		try {
-			region.setFlag(DefaultFlag.ENDERDRAGON_BLOCK_DAMAGE, DefaultFlag.ENDERDRAGON_BLOCK_DAMAGE.parseInput(wg, sender, "deny"));
+			if (!region.getFlag(DefaultFlag.ENDERDRAGON_BLOCK_DAMAGE).toString().equals("DENY")) {
+				region.setFlag(DefaultFlag.ENDERDRAGON_BLOCK_DAMAGE, DefaultFlag.ENDERDRAGON_BLOCK_DAMAGE.parseInput(wg, sender, "DENY"));
+			}
 		} catch (InvalidFlagFormat invalidFlagFormat) {
 			invalidFlagFormat.printStackTrace();
 		}
 
 		try {
-			region.setFlag(DefaultFlag.ENDER_BUILD, DefaultFlag.ENDER_BUILD.parseInput(wg, sender, "deny"));
+			if (!region.getFlag(DefaultFlag.ENDER_BUILD).toString().equals("DENY")) {
+				region.setFlag(DefaultFlag.ENDER_BUILD, DefaultFlag.ENDER_BUILD.parseInput(wg, sender, "DENY"));
+			}
 		} catch (InvalidFlagFormat invalidFlagFormat) {
 			invalidFlagFormat.printStackTrace();
 		}
 
 		try {
-			region.setFlag(DefaultFlag.GHAST_FIREBALL, DefaultFlag.GHAST_FIREBALL.parseInput(wg, sender, "deny"));
+			if (!region.getFlag(DefaultFlag.GHAST_FIREBALL).toString().equals("DENY")) {
+				region.setFlag(DefaultFlag.GHAST_FIREBALL, DefaultFlag.GHAST_FIREBALL.parseInput(wg, sender, "DENY"));
+			}
 		} catch (InvalidFlagFormat invalidFlagFormat) {
 			invalidFlagFormat.printStackTrace();
 		}
 
 		try {
-			region.setFlag(DefaultFlag.OTHER_EXPLOSION, DefaultFlag.OTHER_EXPLOSION.parseInput(wg, sender, "deny"));
+			if (!region.getFlag(DefaultFlag.OTHER_EXPLOSION).toString().equals("DENY")) {
+				region.setFlag(DefaultFlag.OTHER_EXPLOSION, DefaultFlag.OTHER_EXPLOSION.parseInput(wg, sender, "DENY"));
+			}
 		} catch (InvalidFlagFormat invalidFlagFormat) {
 			invalidFlagFormat.printStackTrace();
 		}
