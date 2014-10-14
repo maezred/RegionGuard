@@ -32,9 +32,6 @@ public class Listeners implements Listener {
 	protected Listeners(final Plugin instance) {
 		plugin = instance;
 
-		final CommandSender sender = plugin.getServer().getConsoleSender();
-		final WorldGuardPlugin wg = WGBukkit.getPlugin();
-
 		for (Player player : plugin.getServer().getOnlinePlayers()) {
 			Location location = player.getLocation();
 			World world = location.getWorld();
