@@ -44,9 +44,9 @@ public class Listeners implements Listener {
 				if (isPrivateRegion(region) && isMemberOfRegion(player, region)) {
 					players.put(world, region, player);
 
-					System.out.println("Member " + player.getDisplayName() + " entered region " + region.getId() + " in world " + world.getName() + ".");
+					memberEnteredRegion(player, region);
 				} else {
-					System.out.println("Player " + player.getDisplayName() + " entered region " + region.getId() + " in world " + world.getName() + ".");
+					playerEnteredRegion(player, region);
 				}
 			}
 		}
@@ -64,6 +64,22 @@ public class Listeners implements Listener {
 				}
 			}
 		}
+	}
+
+	protected void playerEnteredRegion(Player player, ProtectedRegion region) {
+		System.out.println("Player " + player.getDisplayName() + " entered region " + region.getId() + " in world " + player.getWorld().getName() + ".");
+	}
+
+	protected void memberEnteredRegion(Player player, ProtectedRegion region) {
+		System.out.println("Member " + player.getDisplayName() + " entered region " + region.getId() + " in world " + player.getWorld().getName() + ".");
+	}
+
+	protected void playerLeftRegion(Player player, ProtectedRegion region) {
+		System.out.println("Player " + player.getDisplayName() + " left region " + region.getId() + " in world " + player.getWorld().getName() + ".");
+	}
+
+	protected void memberLeftRegion(Player player, ProtectedRegion region) {
+		System.out.println("Member " + player.getDisplayName() + " left region " + region.getId() + " in world " + player.getWorld().getName() + ".");
 	}
 
 	protected void setActiveFlagsOnRegion(ProtectedRegion region) {
@@ -190,9 +206,9 @@ public class Listeners implements Listener {
 
 			players.put(region, player);
 
-			System.out.println("Member " + player.getDisplayName() + " entered region " + region.getId() + " in world " + player.getWorld().getName() + ".");
+			memberEnteredRegion(player, region);
 		} else {
-			System.out.println("Player " + player.getDisplayName() + " entered region " + region.getId() + " in world " + player.getWorld().getName() + ".");
+			playerEnteredRegion(player, region);
 		}
 	}
 
@@ -202,13 +218,13 @@ public class Listeners implements Listener {
 		Player player = event.getPlayer();
 
 		if (players.remove(region, player)) {
-			System.out.println("Member " + player.getDisplayName() + " left region " + region.getId() + " in world " + player.getWorld().getName() + ".");
+			memberLeftRegion(player, region);
 
 			if (players.isEmpty(player.getWorld(), region)) {
 				setInactiveFlagsOnRegion(region);
 			}
 		} else {
-			System.out.println("Player " + player.getDisplayName() + " left region " + region.getId() + " in world " + player.getWorld().getName() + ".");
+			playerLeftRegion(player, region);
 		}
 	}
 }
