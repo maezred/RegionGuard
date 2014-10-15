@@ -6,6 +6,7 @@ import com.sk89q.worldguard.bukkit.WGBukkit;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.flags.InvalidFlagFormat;
+import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.Location;
@@ -85,11 +86,13 @@ public class Listeners implements Listener {
 			return;
 		}
 
-		CommandSender sender = plugin.getServer().getConsoleSender();
-		WorldGuardPlugin wg = WGBukkit.getPlugin();
+		final CommandSender sender = plugin.getServer().getConsoleSender();
+		final WorldGuardPlugin wg = WGBukkit.getPlugin();
 
 		try {
-			if (!region.getFlag(DefaultFlag.CREEPER_EXPLOSION).toString().equals("ALLOW")) {
+			final StateFlag.State flag = region.getFlag(DefaultFlag.CREEPER_EXPLOSION);
+
+			if (flag == null || !flag.toString().equals("ALLOW")) {
 				region.setFlag(DefaultFlag.CREEPER_EXPLOSION, DefaultFlag.CREEPER_EXPLOSION.parseInput(wg, sender, "ALLOW"));
 			}
 		} catch (InvalidFlagFormat invalidFlagFormat) {
@@ -97,7 +100,9 @@ public class Listeners implements Listener {
 		}
 
 		try {
-			if (!region.getFlag(DefaultFlag.ENDERDRAGON_BLOCK_DAMAGE).toString().equals("ALLOW")) {
+			final StateFlag.State flag = region.getFlag(DefaultFlag.ENDERDRAGON_BLOCK_DAMAGE);
+
+			if (flag == null || !flag.toString().equals("ALLOW")) {
 				region.setFlag(DefaultFlag.ENDERDRAGON_BLOCK_DAMAGE, DefaultFlag.ENDERDRAGON_BLOCK_DAMAGE.parseInput(wg, sender, "ALLOW"));
 			}
 		} catch (InvalidFlagFormat invalidFlagFormat) {
@@ -105,7 +110,9 @@ public class Listeners implements Listener {
 		}
 
 		try {
-			if (!region.getFlag(DefaultFlag.ENDER_BUILD).toString().equals("ALLOW")) {
+			final StateFlag.State flag = region.getFlag(DefaultFlag.ENDER_BUILD);
+
+			if (flag == null || !flag.toString().equals("ALLOW")) {
 				region.setFlag(DefaultFlag.ENDER_BUILD, DefaultFlag.ENDER_BUILD.parseInput(wg, sender, "ALLOW"));
 			}
 		} catch (InvalidFlagFormat invalidFlagFormat) {
@@ -113,7 +120,9 @@ public class Listeners implements Listener {
 		}
 
 		try {
-			if (!region.getFlag(DefaultFlag.GHAST_FIREBALL).toString().equals("ALLOW")) {
+			final StateFlag.State flag = region.getFlag(DefaultFlag.GHAST_FIREBALL);
+
+			if (flag == null || !flag.toString().equals("ALLOW")) {
 				region.setFlag(DefaultFlag.GHAST_FIREBALL, DefaultFlag.GHAST_FIREBALL.parseInput(wg, sender, "ALLOW"));
 			}
 		} catch (InvalidFlagFormat invalidFlagFormat) {
@@ -121,7 +130,9 @@ public class Listeners implements Listener {
 		}
 
 		try {
-			if (!region.getFlag(DefaultFlag.OTHER_EXPLOSION).toString().equals("ALLOW")) {
+			final StateFlag.State flag = region.getFlag(DefaultFlag.OTHER_EXPLOSION);
+
+			if (flag == null || !flag.toString().equals("ALLOW")) {
 				region.setFlag(DefaultFlag.OTHER_EXPLOSION, DefaultFlag.OTHER_EXPLOSION.parseInput(wg, sender, "ALLOW"));
 			}
 		} catch (InvalidFlagFormat invalidFlagFormat) {
@@ -136,11 +147,13 @@ public class Listeners implements Listener {
 			return;
 		}
 
-		CommandSender sender = plugin.getServer().getConsoleSender();
-		WorldGuardPlugin wg = WGBukkit.getPlugin();
+		final CommandSender sender = plugin.getServer().getConsoleSender();
+		final WorldGuardPlugin wg = WGBukkit.getPlugin();
 
 		try {
-			if (!region.getFlag(DefaultFlag.CREEPER_EXPLOSION).toString().equals("DENY")) {
+			final StateFlag.State flag = region.getFlag(DefaultFlag.CREEPER_EXPLOSION);
+
+			if (flag == null || !flag.toString().equals("DENY")) {
 				region.setFlag(DefaultFlag.CREEPER_EXPLOSION, DefaultFlag.CREEPER_EXPLOSION.parseInput(wg, sender, "DENY"));
 			}
 		} catch (InvalidFlagFormat invalidFlagFormat) {
@@ -148,7 +161,9 @@ public class Listeners implements Listener {
 		}
 
 		try {
-			if (!region.getFlag(DefaultFlag.ENDERDRAGON_BLOCK_DAMAGE).toString().equals("DENY")) {
+			final StateFlag.State flag = region.getFlag(DefaultFlag.ENDERDRAGON_BLOCK_DAMAGE);
+
+			if (flag == null || !flag.toString().equals("DENY")) {
 				region.setFlag(DefaultFlag.ENDERDRAGON_BLOCK_DAMAGE, DefaultFlag.ENDERDRAGON_BLOCK_DAMAGE.parseInput(wg, sender, "DENY"));
 			}
 		} catch (InvalidFlagFormat invalidFlagFormat) {
@@ -156,7 +171,9 @@ public class Listeners implements Listener {
 		}
 
 		try {
-			if (!region.getFlag(DefaultFlag.ENDER_BUILD).toString().equals("DENY")) {
+			final StateFlag.State flag = region.getFlag(DefaultFlag.ENDER_BUILD);
+
+			if (flag == null || !flag.toString().equals("DENY")) {
 				region.setFlag(DefaultFlag.ENDER_BUILD, DefaultFlag.ENDER_BUILD.parseInput(wg, sender, "DENY"));
 			}
 		} catch (InvalidFlagFormat invalidFlagFormat) {
@@ -164,7 +181,9 @@ public class Listeners implements Listener {
 		}
 
 		try {
-			if (!region.getFlag(DefaultFlag.GHAST_FIREBALL).toString().equals("DENY")) {
+			final StateFlag.State flag = region.getFlag(DefaultFlag.GHAST_FIREBALL);
+
+			if (flag == null || !flag.toString().equals("DENY")) {
 				region.setFlag(DefaultFlag.GHAST_FIREBALL, DefaultFlag.GHAST_FIREBALL.parseInput(wg, sender, "DENY"));
 			}
 		} catch (InvalidFlagFormat invalidFlagFormat) {
@@ -172,7 +191,9 @@ public class Listeners implements Listener {
 		}
 
 		try {
-			if (!region.getFlag(DefaultFlag.OTHER_EXPLOSION).toString().equals("DENY")) {
+			final StateFlag.State flag = region.getFlag(DefaultFlag.OTHER_EXPLOSION);
+
+			if (flag == null || !flag.toString().equals("DENY")) {
 				region.setFlag(DefaultFlag.OTHER_EXPLOSION, DefaultFlag.OTHER_EXPLOSION.parseInput(wg, sender, "DENY"));
 			}
 		} catch (InvalidFlagFormat invalidFlagFormat) {
