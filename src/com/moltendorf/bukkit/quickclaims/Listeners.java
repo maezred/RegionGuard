@@ -47,9 +47,9 @@ public class Listeners implements Listener {
 				if (isPrivateRegion(region) && isMemberOfRegion(player, region)) {
 					players.put(world, region, player);
 
-					memberEnteredRegion(player, region);
+					memberEnteredRegion(player, region, world);
 				} else {
-					playerEnteredRegion(player, region);
+					playerEnteredRegion(player, region, world);
 				}
 			}
 		}
@@ -69,20 +69,20 @@ public class Listeners implements Listener {
 		}
 	}
 
-	protected void playerEnteredRegion(Player player, ProtectedRegion region) {
-		System.out.println("Player " + player.getDisplayName() + " entered region " + region.getId() + " in world " + player.getWorld().getName() + ".");
+	protected void playerEnteredRegion(Player player, ProtectedRegion region, World world) {
+		System.out.println("Player " + player.getDisplayName() + " entered region " + region.getId() + " in world " + world.getName() + ".");
 	}
 
-	protected void memberEnteredRegion(Player player, ProtectedRegion region) {
-		System.out.println("Member " + player.getDisplayName() + " entered region " + region.getId() + " in world " + player.getWorld().getName() + ".");
+	protected void memberEnteredRegion(Player player, ProtectedRegion region, World world) {
+		System.out.println("Member " + player.getDisplayName() + " entered region " + region.getId() + " in world " + world.getName() + ".");
 	}
 
-	protected void playerLeftRegion(Player player, ProtectedRegion region) {
-		System.out.println("Player " + player.getDisplayName() + " left region " + region.getId() + " in world " + player.getWorld().getName() + ".");
+	protected void playerLeftRegion(Player player, ProtectedRegion region, World world) {
+		System.out.println("Player " + player.getDisplayName() + " left region " + region.getId() + " in world " + world.getName() + ".");
 	}
 
-	protected void memberLeftRegion(Player player, ProtectedRegion region) {
-		System.out.println("Member " + player.getDisplayName() + " left region " + region.getId() + " in world " + player.getWorld().getName() + ".");
+	protected void memberLeftRegion(Player player, ProtectedRegion region, World world) {
+		System.out.println("Member " + player.getDisplayName() + " left region " + region.getId() + " in world " + world.getName() + ".");
 	}
 
 	protected void setActiveFlagsOnRegion(ProtectedRegion region) {
@@ -277,12 +277,12 @@ public class Listeners implements Listener {
 
 				players.put(region, player);
 
-				memberEnteredRegion(player, region);
+				memberEnteredRegion(player, region, world);
 			} else {
-				playerEnteredRegion(player, region);
+				playerEnteredRegion(player, region, world);
 			}
 		} else {
-			playerEnteredRegion(player, region);
+			playerEnteredRegion(player, region, world);
 		}
 	}
 
@@ -292,13 +292,13 @@ public class Listeners implements Listener {
 
 	protected void unflagPlayerForRegion(final Player player, final ProtectedRegion region, final World world) {
 		if (players.remove(region, player)) {
-			memberLeftRegion(player, region);
+			memberLeftRegion(player, region, world);
 
 			if (players.isEmpty(world, region)) {
 				setInactiveFlagsOnRegion(region);
 			}
 		} else {
-			playerLeftRegion(player, region);
+			playerLeftRegion(player, region, world);
 		}
 	}
 
