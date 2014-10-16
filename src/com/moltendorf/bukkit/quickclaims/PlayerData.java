@@ -47,6 +47,8 @@ public class PlayerData {
 		if (currentWorldID != null) {
 			final World world = plugin.getServer().getWorld(currentWorldID);
 
+			currentWorldID = null;
+
 			if (world != null) {
 				final RegionManager manager = WGBukkit.getRegionManager(world);
 
@@ -57,7 +59,6 @@ public class PlayerData {
 				}
 			}
 
-			currentWorldID = null;
 			regionIDs.clear();
 		}
 	}
