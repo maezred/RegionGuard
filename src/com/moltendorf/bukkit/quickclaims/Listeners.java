@@ -17,8 +17,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Listener register.
@@ -29,10 +31,12 @@ public class Listeners implements Listener {
 
 	final protected Plugin plugin;
 
-	final protected PlayerStore players = new PlayerStore();
+	final protected PlayerStore players;
 
 	protected Listeners(final Plugin instance) {
 		plugin = instance;
+
+		players = new PlayerStore(plugin);
 
 		for (Player player : plugin.getServer().getOnlinePlayers()) {
 			Location location = player.getLocation();
@@ -312,5 +316,22 @@ public class Listeners implements Listener {
 		ProtectedRegion region = event.getRegion();
 
 		unflagPlayerForRegion(player, region);
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void PlayerChangedWorldEventMonitor(final PlayerChangedWorldEvent event) {
+		final Player player = event.getPlayer();
+
+		final UUID playerID = player.getUniqueId();
+		final UUID worldID = player.getWorld().getUID();
+
+		final PlayerData playerData = players.playerRegions.get(playerID);
+
+		if (playerData == null || playerData.currentWorldID == worldID) {
+			return;
+		}
+
+		playerData.clear();
+		playerData.currentWorldID = worldID;
 	}
 }

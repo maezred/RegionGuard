@@ -10,7 +10,14 @@ import java.util.*;
  * Created by moltendorf on 14/10/11.
  */
 public class PlayerStore {
-	final protected Map<UUID, Map<String, Set<UUID>>> players = new LinkedHashMap<>();
+	final protected Plugin plugin;
+
+	final protected Map<UUID, Map<String, Set<UUID>>> serverPlayers = new LinkedHashMap<>();
+	final protected Map<UUID, PlayerData> playerRegions = new LinkedHashMap<>();
+
+	public PlayerStore(Plugin instance) {
+		plugin = instance;
+	}
 
 	public boolean put(ProtectedRegion region, Player player) {
 		return put(player.getWorld(), region, player);
@@ -19,12 +26,12 @@ public class PlayerStore {
 	public boolean put(World world, ProtectedRegion region, Player player) {
 		UUID worldID = world.getUID();
 
-		Map<String, Set<UUID>> worldPlayers = players.get(worldID);
+		Map<String, Set<UUID>> worldPlayers = serverPlayers.get(worldID);
 
 		if (worldPlayers == null) {
 			worldPlayers = new LinkedHashMap<>();
 
-			players.put(worldID, worldPlayers);
+			serverPlayers.put(worldID, worldPlayers);
 		}
 
 		String regionID = region.getId();
@@ -37,7 +44,19 @@ public class PlayerStore {
 			worldPlayers.put(regionID, regionPlayers);
 		}
 
-		return regionPlayers.add(player.getUniqueId());
+		UUID playerID = player.getUniqueId();
+
+		PlayerData playerData = playerRegions.get(playerID);
+
+		if (playerData == null) {
+			playerData = new PlayerData(plugin, player);
+
+			playerRegions.put(playerID, playerData);
+		}
+
+		playerData.add(worldID, regionID);
+
+		return regionPlayers.add(playerID);
 	}
 
 	public boolean remove(ProtectedRegion region, Player player) {
@@ -45,23 +64,39 @@ public class PlayerStore {
 	}
 
 	public boolean remove(World world, ProtectedRegion region, Player player) {
-		Map<String, Set<UUID>> worldPlayers = players.get(world.getUID());
+		UUID worldID = world.getUID();
+
+		Map<String, Set<UUID>> worldPlayers = serverPlayers.get(worldID);
 
 		if (worldPlayers == null) {
 			return false;
 		}
 
-		Set<UUID> regionPlayers = worldPlayers.get(region.getId());
+		String regionID = region.getId();
+
+		Set<UUID> regionPlayers = worldPlayers.get(regionID);
 
 		if (regionPlayers == null) {
 			return false;
 		}
 
-		return regionPlayers.remove(player.getUniqueId());
+		UUID playerID = player.getUniqueId();
+
+		PlayerData playerData = playerRegions.get(playerID);
+
+		if (playerData == null) {
+			playerData = new PlayerData(plugin, player);
+
+			playerRegions.put(playerID, playerData);
+		}
+
+		playerData.remove(worldID, regionID);
+
+		return regionPlayers.remove(playerID);
 	}
 
 	public int size(World world, ProtectedRegion region) {
-		Map<String, Set<UUID>> worldPlayers = players.get(world.getUID());
+		Map<String, Set<UUID>> worldPlayers = serverPlayers.get(world.getUID());
 
 		if (worldPlayers == null) {
 			return 0;
@@ -77,7 +112,7 @@ public class PlayerStore {
 	}
 
 	public boolean isEmpty(World world, ProtectedRegion region) {
-		Map<String, Set<UUID>> worldPlayers = players.get(world.getUID());
+		Map<String, Set<UUID>> worldPlayers = serverPlayers.get(world.getUID());
 
 		if (worldPlayers == null) {
 			return true;
@@ -93,7 +128,7 @@ public class PlayerStore {
 	}
 
 	public void clear(World world, ProtectedRegion region) {
-		Map<String, Set<UUID>> worldPlayers = players.get(world.getUID());
+		Map<String, Set<UUID>> worldPlayers = serverPlayers.get(world.getUID());
 
 		if (worldPlayers == null) {
 			return;
@@ -103,10 +138,10 @@ public class PlayerStore {
 	}
 
 	public void clear(World world) {
-		players.remove(world.getUID());
+		serverPlayers.remove(world.getUID());
 	}
 
 	public void clear() {
-		players.clear();
+		serverPlayers.clear();
 	}
 }

@@ -12,6 +12,7 @@ public class Plugin extends JavaPlugin {
 
 	// Variable data.
 	protected Configuration configuration = null;
+	protected Listeners listeners = null;
 
 	@Override
 	public synchronized void onDisable() {
@@ -37,7 +38,9 @@ public class Plugin extends JavaPlugin {
 		// Get plugin manager.
 		final PluginManager manager = server.getPluginManager();
 
+		listeners = new Listeners(this);
+
 		// Register our event listeners.
-		manager.registerEvents(new Listeners(this), this);
+		manager.registerEvents(listeners, this);
 	}
 }
