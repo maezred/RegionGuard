@@ -279,9 +279,33 @@ public class Listeners implements Listener {
 
 				memberEnteredRegion(player, region, world);
 			} else {
+				UUID playerID = player.getUniqueId();
+
+				PlayerData playerData = players.playerRegions.get(playerID);
+
+				if (playerData == null) {
+					playerData = new PlayerData(plugin, player);
+
+					players.playerRegions.put(playerID, playerData);
+				}
+
+				playerData.add(world.getUID(), region.getId());
+
 				playerEnteredRegion(player, region, world);
 			}
 		} else {
+			UUID playerID = player.getUniqueId();
+
+			PlayerData playerData = players.playerRegions.get(playerID);
+
+			if (playerData == null) {
+				playerData = new PlayerData(plugin, player);
+
+				players.playerRegions.put(playerID, playerData);
+			}
+
+			playerData.add(world.getUID(), region.getId());
+
 			playerEnteredRegion(player, region, world);
 		}
 	}
