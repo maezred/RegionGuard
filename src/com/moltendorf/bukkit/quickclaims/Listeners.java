@@ -234,6 +234,10 @@ public class Listeners implements Listener {
 	}
 
 	protected void flagPlayerForRegion(final Player player, final ProtectedRegion region) {
+		flagPlayerForRegion(player, region, player.getWorld());
+	}
+
+	protected void flagPlayerForRegion(final Player player, final ProtectedRegion region, final World world) {
 		if (isPrivateRegion(region)) {
 			String message = region.getFlag(DefaultFlag.GREET_MESSAGE);
 
@@ -263,7 +267,7 @@ public class Listeners implements Listener {
 			}
 
 			if (isMemberOfRegion(player, region)) {
-				if (players.isEmpty(player.getWorld(), region)) {
+				if (players.isEmpty(world, region)) {
 					setActiveFlagsOnRegion(region);
 				}
 
@@ -279,10 +283,14 @@ public class Listeners implements Listener {
 	}
 
 	protected void unflagPlayerForRegion(final Player player, final ProtectedRegion region) {
+		unflagPlayerForRegion(player, region, player.getWorld());
+	}
+
+	protected void unflagPlayerForRegion(final Player player, final ProtectedRegion region, final World world) {
 		if (players.remove(region, player)) {
 			memberLeftRegion(player, region);
 
-			if (players.isEmpty(player.getWorld(), region)) {
+			if (players.isEmpty(world, region)) {
 				setInactiveFlagsOnRegion(region);
 			}
 		} else {
