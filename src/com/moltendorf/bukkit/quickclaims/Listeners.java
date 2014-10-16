@@ -275,7 +275,7 @@ public class Listeners implements Listener {
 					setActiveFlagsOnRegion(region);
 				}
 
-				players.put(region, player);
+				players.put(world, region, player);
 
 				memberEnteredRegion(player, region, world);
 			} else {
@@ -291,7 +291,7 @@ public class Listeners implements Listener {
 	}
 
 	protected void unflagPlayerForRegion(final Player player, final ProtectedRegion region, final World world) {
-		if (players.remove(region, player)) {
+		if (players.remove(world, region, player)) {
 			memberLeftRegion(player, region, world);
 
 			if (players.isEmpty(world, region)) {

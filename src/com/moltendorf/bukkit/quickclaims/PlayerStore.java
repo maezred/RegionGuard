@@ -19,10 +19,6 @@ public class PlayerStore {
 		plugin = instance;
 	}
 
-	public boolean put(ProtectedRegion region, Player player) {
-		return put(player.getWorld(), region, player);
-	}
-
 	public boolean put(World world, ProtectedRegion region, Player player) {
 		UUID worldID = world.getUID();
 
@@ -57,10 +53,6 @@ public class PlayerStore {
 		playerData.add(worldID, regionID);
 
 		return regionPlayers.add(playerID);
-	}
-
-	public boolean remove(ProtectedRegion region, Player player) {
-		return remove(player.getWorld(), region, player);
 	}
 
 	public boolean remove(World world, ProtectedRegion region, Player player) {
