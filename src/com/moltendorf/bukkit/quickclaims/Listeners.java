@@ -233,11 +233,7 @@ public class Listeners implements Listener {
 		return false;
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void RegionEnteredEventMonitor(final RegionEnteredEvent event) {
-		ProtectedRegion region = event.getRegion();
-		Player player = event.getPlayer();
-
+	protected void flagPlayerForRegion(final Player player, final ProtectedRegion region) {
 		if (isPrivateRegion(region)) {
 			String message = region.getFlag(DefaultFlag.GREET_MESSAGE);
 
@@ -282,11 +278,7 @@ public class Listeners implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void RegionLeaveEventMonitor(final RegionLeftEvent event) {
-		ProtectedRegion region = event.getRegion();
-		Player player = event.getPlayer();
-
+	protected void unflagPlayerForRegion(final Player player, final ProtectedRegion region) {
 		if (players.remove(region, player)) {
 			memberLeftRegion(player, region);
 
@@ -296,5 +288,21 @@ public class Listeners implements Listener {
 		} else {
 			playerLeftRegion(player, region);
 		}
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void RegionEnteredEventMonitor(final RegionEnteredEvent event) {
+		Player player = event.getPlayer();
+		ProtectedRegion region = event.getRegion();
+
+		flagPlayerForRegion(player, region);
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void RegionLeaveEventMonitor(final RegionLeftEvent event) {
+		Player player = event.getPlayer();
+		ProtectedRegion region = event.getRegion();
+
+		unflagPlayerForRegion(player, region);
 	}
 }
