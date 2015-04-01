@@ -4,6 +4,7 @@ import com.mewin.WGRegionEvents.events.RegionEnteredEvent;
 import com.mewin.WGRegionEvents.events.RegionLeftEvent;
 import com.sk89q.worldguard.bukkit.WGBukkit;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.flags.InvalidFlagFormat;
 import com.sk89q.worldguard.protection.flags.StateFlag;
@@ -19,8 +20,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Listener register.
@@ -32,39 +32,32 @@ public class Listeners implements Listener {
 	final protected Plugin plugin;
 
 	final protected PlayerStore players;
+	final protected Set<String> regions = new HashSet<>();
 
 	protected Listeners(final Plugin instance) {
 		plugin = instance;
 
 		players = new PlayerStore(plugin);
 
-		for (Player player : plugin.getServer().getOnlinePlayers()) {
-			Location location = player.getLocation();
-			World world = location.getWorld();
-			RegionManager manager = WGBukkit.getRegionManager(world);
-
-			for (ProtectedRegion region : manager.getApplicableRegions(location)) {
-				if (isPrivateRegion(region) && isMemberOfRegion(player, region)) {
-					players.put(world, region, player);
-
-					memberEnteredRegion(player, region, world);
-				} else {
-					playerEnteredRegion(player, region, world);
-				}
-			}
-		}
-
+		// Protect all regions.
 		for (World world : plugin.getServer().getWorlds()) {
 			RegionManager manager = WGBukkit.getRegionManager(world);
 
 			for (Map.Entry<String, ProtectedRegion> entry : manager.getRegions().entrySet()) {
 				ProtectedRegion region = entry.getValue();
 
-				if (players.isEmpty(world, region)) {
-					setInactiveFlagsOnRegion(region);
-				} else {
-					setActiveFlagsOnRegion(region);
-				}
+				setInactiveFlagsOnRegion(region);
+			}
+		}
+
+		// Disable extensive protections on regions with members in them.
+		for (Player player : plugin.getServer().getOnlinePlayers()) {
+			Location location = player.getLocation();
+			World world = location.getWorld();
+			RegionManager manager = WGBukkit.getRegionManager(world);
+
+			for (ProtectedRegion region : manager.getApplicableRegions(location)) {
+				flagPlayerForRegion(player, region, world);
 			}
 		}
 	}
@@ -209,7 +202,7 @@ public class Listeners implements Listener {
 
 	protected boolean isPrivateRegion(ProtectedRegion region) {
 		do {
-			if (region.getOwners().getPlayers().size() > 0) {
+			if (region.getOwners().size() > 0) {
 				return true;
 			}
 
@@ -220,14 +213,14 @@ public class Listeners implements Listener {
 	}
 
 	protected boolean isMemberOfRegion(Player player, ProtectedRegion region) {
-		String playerName = player.getName().toLowerCase();
+		UUID playerID = player.getUniqueId();
 
 		do {
-			if (region.getMembers().getPlayers().contains(playerName)) {
+			if (region.getMembers().contains(playerID)) {
 				return true;
 			}
 
-			if (region.getOwners().getPlayers().contains(playerName)) {
+			if (region.getOwners().contains(playerID)) {
 				return true;
 			}
 
@@ -243,22 +236,64 @@ public class Listeners implements Listener {
 
 	protected void flagPlayerForRegion(final Player player, final ProtectedRegion region, final World world) {
 		if (isPrivateRegion(region)) {
-			String message = region.getFlag(DefaultFlag.GREET_MESSAGE);
+			boolean first = !regions.contains(region.getId());
 
-			if (message == null) {
-				message = "&1[&C";
+			// Convert names to UUIDs.
+			if (first) {
+				DefaultDomain owners = region.getOwners();
 
-				int count = 0;
-
-				for (String name : region.getOwners().getPlayers()) {
+				for (String name : owners.getPlayers()) {
 					OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer(name);
 
+					owners.removePlayer(name);
+					owners.addPlayer(offlinePlayer.getUniqueId());
+				}
+
+				region.setOwners(owners);
+
+				DefaultDomain members = region.getMembers();
+
+				for (String name : members.getPlayers()) {
+					OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer(name);
+
+					members.removePlayer(name);
+					members.addPlayer(offlinePlayer.getUniqueId());
+				}
+
+				region.setMembers(members);
+			}
+
+			String message = region.getFlag(DefaultFlag.GREET_MESSAGE);
+
+			if (message == null || (first && message.startsWith("&r"))) {
+				List<String> names = new ArrayList<>();
+
+				for (UUID playerID : region.getOwners().getUniqueIds()) {
+					OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer(playerID);
+
 					if (offlinePlayer.getFirstPlayed() != 0) {
-						message += (count++ == 0 ? " " : " & ") + offlinePlayer.getName();
+						names.add(offlinePlayer.getName());
 					}
 				}
 
-				message += "'s Home &1]";
+				Collections.sort(names, String.CASE_INSENSITIVE_ORDER);
+
+				message = "&r&8[&7";
+
+				int count = names.size();
+				int current = 0;
+
+				for (String name : names) {
+					if (current++ == 0) {
+						message += " " + name;
+					} else if (count == current) {
+						message += " & " + name;
+					} else {
+						message += ", " + name;
+					}
+				}
+
+				message += "'s Home &8]";
 
 				CommandSender sender = plugin.getServer().getConsoleSender();
 				WorldGuardPlugin wg = WGBukkit.getPlugin();
@@ -269,6 +304,8 @@ public class Listeners implements Listener {
 					invalidFlagFormat.printStackTrace();
 				}
 			}
+
+			regions.add(region.getId()); // Only update greeting once per server restart.
 
 			if (isMemberOfRegion(player, region)) {
 				if (players.isEmpty(world, region)) {

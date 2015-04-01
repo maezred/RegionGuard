@@ -112,11 +112,7 @@ public class PlayerStore {
 
 		Set<UUID> regionPlayers = worldPlayers.get(region.getId());
 
-		if (regionPlayers == null) {
-			return true;
-		}
-
-		return regionPlayers.isEmpty();
+		return regionPlayers == null || regionPlayers.isEmpty();
 	}
 
 	public void clear(World world, ProtectedRegion region) {
