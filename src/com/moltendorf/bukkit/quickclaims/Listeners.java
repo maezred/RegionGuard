@@ -293,7 +293,15 @@ public class Listeners implements Listener {
 					}
 				}
 
-				message += "'s Home &8]";
+				message += "'s ";
+
+				if (world.getName().equalsIgnoreCase("world_nether")) {
+					message += "Portal";
+				} else {
+					message += "Home";
+				}
+
+				message += " &8]";
 
 				CommandSender sender = plugin.getServer().getConsoleSender();
 				WorldGuardPlugin wg = WGBukkit.getPlugin();
