@@ -448,7 +448,7 @@ public class Listeners implements Listener {
 
 				if (first) {
 					// Tweak priority.
-					region.setPriority(1);
+					region.setPriority(2);
 
 					// Make sure administrators and moderators are members.
 					DefaultDomain members = region.getMembers();
