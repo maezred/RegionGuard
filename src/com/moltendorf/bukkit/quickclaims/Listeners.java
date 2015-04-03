@@ -235,9 +235,11 @@ public class Listeners implements Listener {
 	}
 
 	protected void flagPlayerForRegion(final Player player, final ProtectedRegion region, final World world) {
-		if (isPrivateRegion(region)) {
-			boolean first = !regions.contains(region.getId());
+		boolean first = !regions.contains(region.getId());
 
+		regions.add(region.getId()); // Only update greeting once per server restart.
+
+		if (isPrivateRegion(region)) {
 			// Convert names to UUIDs.
 			if (first) {
 				DefaultDomain owners = region.getOwners();
@@ -313,8 +315,6 @@ public class Listeners implements Listener {
 				}
 			}
 
-			regions.add(region.getId()); // Only update greeting once per server restart.
-
 			if (isMemberOfRegion(player, region)) {
 				if (players.isEmpty(world, region)) {
 					setActiveFlagsOnRegion(region);
@@ -339,6 +339,114 @@ public class Listeners implements Listener {
 				playerEnteredRegion(player, region, world);
 			}
 		} else {
+			String message = region.getFlag(DefaultFlag.GREET_MESSAGE);
+			String id = region.getId();
+
+			check:
+			if (id.length() > 1 && (message == null || (first && message.startsWith("&r")))) {
+				message = "&r&8[&b ";
+
+				switch (id.charAt(0)) {
+					case 'n':
+						message += "North";
+						break;
+
+					case 'e':
+						message += "East";
+						break;
+
+					case 's':
+						message += "South";
+						break;
+
+					case 'w':
+						message += "West";
+						break;
+
+					default:
+						break check;
+
+				}
+
+				switch (id.charAt(id.length() - 1)) {
+					case 'p':
+						if (id.length() > 3) {
+							switch (id.charAt(1)) {
+								case 'n':
+									message += " to North";
+									break;
+
+								case 'e':
+									message += " to East";
+									break;
+
+								case 's':
+									message += " to South";
+									break;
+
+								case 'w':
+									message += " to West";
+									break;
+
+								default:
+									break check;
+							}
+
+							message += " at " + id.substring(2, id.length() - 1);
+						} else if (id.length() > 2) {
+							break check;
+						}
+
+						message += " Path";
+						break;
+
+					case 'c':
+						if (id.length() > 3) {
+							switch (id.charAt(1)) {
+								case 'n':
+									message += " North";
+									break;
+
+								case 'e':
+									message += " East";
+									break;
+
+								case 's':
+									message += " South";
+									break;
+
+								case 'w':
+									message += " West";
+									break;
+
+								default:
+									break check;
+							}
+
+							String coordinates = id.substring(2, id.length() - 1);
+
+							message += " " + coordinates + " to " + (new Integer(coordinates) * 2) + " Connector";
+						} else {
+							break check;
+						}
+						break;
+
+					default:
+						break check;
+				}
+
+				message += " &8]";
+
+				CommandSender sender = plugin.getServer().getConsoleSender();
+				WorldGuardPlugin wg = WGBukkit.getPlugin();
+
+				try {
+					region.setFlag(DefaultFlag.GREET_MESSAGE, DefaultFlag.GREET_MESSAGE.parseInput(wg, sender, message));
+				} catch (InvalidFlagFormat invalidFlagFormat) {
+					invalidFlagFormat.printStackTrace();
+				}
+			}
+
 			UUID playerID = player.getUniqueId();
 
 			PlayerData playerData = players.playerRegions.get(playerID);
