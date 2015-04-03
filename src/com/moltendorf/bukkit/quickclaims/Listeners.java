@@ -445,6 +445,50 @@ public class Listeners implements Listener {
 				} catch (InvalidFlagFormat invalidFlagFormat) {
 					invalidFlagFormat.printStackTrace();
 				}
+
+				if (first) {
+					// Tweak priority.
+					region.setPriority(1);
+
+					// Make sure administrators and moderators are members.
+					DefaultDomain members = region.getMembers();
+
+					members.addGroup("sudo");
+					members.addGroup("moderator");
+
+					region.setMembers(members);
+
+					// Make sure people don't starve together.
+					try {
+						final Integer flag = region.getFlag(DefaultFlag.FEED_AMOUNT);
+
+						if (flag == null || flag != 1) {
+							region.setFlag(DefaultFlag.FEED_AMOUNT, DefaultFlag.FEED_AMOUNT.parseInput(wg, sender, "1"));
+						}
+					} catch (InvalidFlagFormat invalidFlagFormat) {
+						invalidFlagFormat.printStackTrace();
+					}
+
+					try {
+						final Integer flag = region.getFlag(DefaultFlag.FEED_DELAY);
+
+						if (flag == null || flag != 1) {
+							region.setFlag(DefaultFlag.FEED_DELAY, DefaultFlag.FEED_DELAY.parseInput(wg, sender, "1"));
+						}
+					} catch (InvalidFlagFormat invalidFlagFormat) {
+						invalidFlagFormat.printStackTrace();
+					}
+
+					try {
+						final Integer flag = region.getFlag(DefaultFlag.MAX_FOOD);
+
+						if (flag == null || flag != 8) {
+							region.setFlag(DefaultFlag.MAX_FOOD, DefaultFlag.MAX_FOOD.parseInput(wg, sender, "8"));
+						}
+					} catch (InvalidFlagFormat invalidFlagFormat) {
+						invalidFlagFormat.printStackTrace();
+					}
+				}
 			}
 
 			UUID playerID = player.getUniqueId();
