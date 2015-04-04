@@ -235,9 +235,9 @@ public class Listeners implements Listener {
 	}
 
 	protected void flagPlayerForRegion(final Player player, final ProtectedRegion region, final World world) {
-		boolean first = !regions.contains(region.getId());
+		boolean first = !regions.contains(world.getName()+":"+region.getId());
 
-		regions.add(region.getId()); // Only update greeting once per server restart.
+		regions.add(world.getName()+":"+region.getId()); // Only update greeting once per server restart.
 
 		if (isPrivateRegion(region)) {
 			// Convert names to UUIDs.
