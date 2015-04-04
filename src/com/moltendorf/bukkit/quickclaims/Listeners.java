@@ -14,6 +14,7 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -31,11 +32,15 @@ public class Listeners implements Listener {
 
 	final protected Plugin plugin;
 
+	final protected ConsoleCommandSender console;
+
 	final protected PlayerStore players;
 	final protected Set<String> regions = new HashSet<>();
 
 	protected Listeners(final Plugin instance) {
 		plugin = instance;
+
+		console = plugin.getServer().getConsoleSender();
 
 		players = new PlayerStore(plugin);
 
@@ -63,19 +68,19 @@ public class Listeners implements Listener {
 	}
 
 	protected void playerEnteredRegion(Player player, ProtectedRegion region, World world) {
-		System.out.println("Player " + player.getDisplayName() + " entered region " + region.getId() + " in world " + world.getName() + ".");
+		console.sendMessage("§fPlayer " + player.getDisplayName() + " entered region " + region.getId() + " in world " + world.getName() + ".");
 	}
 
 	protected void memberEnteredRegion(Player player, ProtectedRegion region, World world) {
-		System.out.println("Member " + player.getDisplayName() + " entered region " + region.getId() + " in world " + world.getName() + ".");
+		console.sendMessage("§bMember " + player.getDisplayName() + " entered region " + region.getId() + " in world " + world.getName() + ".");
 	}
 
 	protected void playerLeftRegion(Player player, ProtectedRegion region, World world) {
-		System.out.println("Player " + player.getDisplayName() + " left region " + region.getId() + " in world " + world.getName() + ".");
+		console.sendMessage("§7Player " + player.getDisplayName() + " left region " + region.getId() + " in world " + world.getName() + ".");
 	}
 
 	protected void memberLeftRegion(Player player, ProtectedRegion region, World world) {
-		System.out.println("Member " + player.getDisplayName() + " left region " + region.getId() + " in world " + world.getName() + ".");
+		console.sendMessage("§3Member " + player.getDisplayName() + " left region " + region.getId() + " in world " + world.getName() + ".");
 	}
 
 	protected void setActiveFlagsOnRegion(ProtectedRegion region) {
@@ -136,7 +141,7 @@ public class Listeners implements Listener {
 			invalidFlagFormat.printStackTrace();
 		}
 
-		System.out.println("Disabled protection on region " + region.getId() + ".");
+		console.sendMessage("§4Disabled protection on region " + region.getId() + ".");
 	}
 
 	protected void setInactiveFlagsOnRegion(ProtectedRegion region) {
@@ -197,7 +202,7 @@ public class Listeners implements Listener {
 			invalidFlagFormat.printStackTrace();
 		}
 
-		System.out.println("Enabled protection on region " + region.getId() + ".");
+		console.sendMessage("§2Enabled protection on region " + region.getId() + ".");
 	}
 
 	protected boolean isPrivateRegion(ProtectedRegion region) {
