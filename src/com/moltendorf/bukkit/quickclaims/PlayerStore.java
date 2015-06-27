@@ -64,6 +64,7 @@ public class PlayerStore {
 			return false;
 		}
 
+		// todo: Apparently sometimes region can go null. Don't use region lookups!
 		String regionID = region.getId();
 
 		Set<UUID> regionPlayers = worldPlayers.get(regionID);
