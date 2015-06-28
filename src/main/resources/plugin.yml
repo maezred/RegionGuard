@@ -1,0 +1,6 @@
+name: ${name}
+main: ${groupId}.${artifactId}.${artifactId}
+version: ${version}-${maven.build.timestamp}
+description: ${description}
+author: moltendorf
+depend: [ WorldGuardRegionEvents ]

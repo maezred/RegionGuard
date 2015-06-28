@@ -1,18 +1,17 @@
-package com.moltendorf.bukkit.quickclaims;
+package net.moltendorf.Bukkit.RegionGuard;
 
 import org.bukkit.Server;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- *
  * @author moltendorf
  */
-public class Plugin extends JavaPlugin {
+public class RegionGuard extends JavaPlugin {
 
 	// Variable data.
 	protected Configuration configuration = null;
-	protected Listeners listeners = null;
+	protected Listeners     listeners     = null;
 
 	@Override
 	public synchronized void onDisable() {

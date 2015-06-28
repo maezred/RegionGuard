@@ -1,4 +1,4 @@
-package com.moltendorf.bukkit.quickclaims;
+package net.moltendorf.Bukkit.RegionGuard;
 
 /**
  * Configuration class.

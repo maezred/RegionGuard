@@ -1,4 +1,4 @@
-package com.moltendorf.bukkit.quickclaims;
+package net.moltendorf.Bukkit.RegionGuard;
 
 import com.sk89q.worldguard.bukkit.WGBukkit;
 import com.sk89q.worldguard.protection.managers.RegionManager;
@@ -14,13 +14,13 @@ import java.util.UUID;
  * Created by moltendorf on 14/10/16.
  */
 public class PlayerData {
-	final protected Plugin plugin;
-	final public Player player;
+	final protected RegionGuard plugin;
+	final public    Player      player;
 
-	public UUID currentWorldID = null;
-	public Set<String> regionIDs = new LinkedHashSet<>();
+	public UUID        currentWorldID = null;
+	public Set<String> regionIDs      = new LinkedHashSet<>();
 
-	public PlayerData(final Plugin instance, final Player newPlayer) {
+	public PlayerData(final RegionGuard instance, final Player newPlayer) {
 		plugin = instance;
 		player = newPlayer;
 	}

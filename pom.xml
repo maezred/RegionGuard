@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>net.moltendorf.Bukkit</groupId>
+	<artifactId>RegionGuard</artifactId>
+	<version>1.6.4</version>
+
+	<name>${artifactId}</name>
+	<description>Protecting your regions.</description>
+
+	<build>
+		<finalName>${artifactId}</finalName>
+
+		<resources>
+			<resource>
+				<directory>${basedir}/src/main/resources/</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<distributionManagement>
+		<repository>
+			<id>net.moltendorf.Bukkit</id>
+			<name>moltendorf.net</name>
+			<url>file:///${env.HOMEDRIVE}${env.HOMEPATH}\Sync\Nexus\</url>
+		</repository>
+	</distributionManagement>
+
+	<repositories>
+		<repository>
+			<id>net.moltendorf.Bukkit</id>
+			<url>https://fab.moltendorf.net/nexus/</url>
+		</repository>
+
+		<repository>
+			<id>spigot-repo</id>
+			<url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
+		</repository>
+	</repositories>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.spigotmc</groupId>
+			<artifactId>spigot-api</artifactId>
+			<version>LATEST</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.mewin</groupId>
+			<artifactId>WorldGuardRegionEvents</artifactId>
+			<version>LATEST</version>
+		</dependency>
+	</dependencies>
+</project>

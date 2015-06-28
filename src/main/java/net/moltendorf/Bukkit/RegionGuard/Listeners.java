@@ -1,7 +1,7 @@
-package com.moltendorf.bukkit.quickclaims;
+package net.moltendorf.Bukkit.RegionGuard;
 
-import com.mewin.WGRegionEvents.events.RegionEnteredEvent;
-import com.mewin.WGRegionEvents.events.RegionLeftEvent;
+import com.mewin.WorldGuardRegionEvents.events.RegionEnteredEvent;
+import com.mewin.WorldGuardRegionEvents.events.RegionLeftEvent;
 import com.sk89q.worldguard.bukkit.WGBukkit;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.domains.DefaultDomain;
@@ -30,14 +30,14 @@ import java.util.*;
  */
 public class Listeners implements Listener {
 
-	final protected Plugin plugin;
+	final protected RegionGuard plugin;
 
 	final protected ConsoleCommandSender console;
 
 	final protected PlayerStore players;
 	final protected Set<String> regions = new HashSet<>();
 
-	protected Listeners(final Plugin instance) {
+	protected Listeners(final RegionGuard instance) {
 		plugin = instance;
 
 		console = plugin.getServer().getConsoleSender();
@@ -88,8 +88,8 @@ public class Listeners implements Listener {
 			return;
 		}
 
-		final CommandSender sender = plugin.getServer().getConsoleSender();
-		final WorldGuardPlugin wg = WGBukkit.getPlugin();
+		final CommandSender    sender = plugin.getServer().getConsoleSender();
+		final WorldGuardPlugin wg     = WGBukkit.getPlugin();
 
 		try {
 			final StateFlag.State flag = region.getFlag(DefaultFlag.CREEPER_EXPLOSION);
@@ -149,8 +149,8 @@ public class Listeners implements Listener {
 			return;
 		}
 
-		final CommandSender sender = plugin.getServer().getConsoleSender();
-		final WorldGuardPlugin wg = WGBukkit.getPlugin();
+		final CommandSender    sender = plugin.getServer().getConsoleSender();
+		final WorldGuardPlugin wg     = WGBukkit.getPlugin();
 
 		try {
 			final StateFlag.State flag = region.getFlag(DefaultFlag.CREEPER_EXPLOSION);
@@ -240,9 +240,9 @@ public class Listeners implements Listener {
 	}
 
 	protected void flagPlayerForRegion(final Player player, final ProtectedRegion region, final World world) {
-		boolean first = !regions.contains(world.getName()+":"+region.getId());
+		boolean first = !regions.contains(world.getName() + ":" + region.getId());
 
-		regions.add(world.getName()+":"+region.getId()); // Only update greeting once per server restart.
+		regions.add(world.getName() + ":" + region.getId()); // Only update greeting once per server restart.
 
 		if (isPrivateRegion(region)) {
 			// Convert names to UUIDs.
@@ -347,7 +347,7 @@ public class Listeners implements Listener {
 			String message = region.getFlag(DefaultFlag.GREET_MESSAGE);
 			String id = region.getId();
 
-			check:
+		check:
 			if (id.length() > 1 && (message == null || (first && message.startsWith("&r")))) {
 				message = "&r&8[&b ";
 
@@ -430,7 +430,7 @@ public class Listeners implements Listener {
 
 							String coordinates = id.substring(2, id.length() - 1);
 
-							message += " " + coordinates + " to " + (new Integer(coordinates) * 2) + " Connector";
+							message += " " + coordinates + " to " + (new Integer(coordinates)*2) + " Connector";
 						} else {
 							break check;
 						}
@@ -530,7 +530,7 @@ public class Listeners implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void RegionEnteredEventMonitor(final RegionEnteredEvent event) {
-		Player player = event.getPlayer();
+		Player          player = event.getPlayer();
 		ProtectedRegion region = event.getRegion();
 
 		flagPlayerForRegion(player, region);
@@ -538,7 +538,7 @@ public class Listeners implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void RegionLeaveEventMonitor(final RegionLeftEvent event) {
-		Player player = event.getPlayer();
+		Player          player = event.getPlayer();
 		ProtectedRegion region = event.getRegion();
 
 		unflagPlayerForRegion(player, region);
@@ -549,7 +549,7 @@ public class Listeners implements Listener {
 		final Player player = event.getPlayer();
 
 		final UUID playerID = player.getUniqueId();
-		final UUID worldID = player.getWorld().getUID();
+		final UUID worldID  = player.getWorld().getUID();
 
 		final PlayerData playerData = players.playerRegions.get(playerID);
 

@@ -1,4 +1,4 @@
-package com.moltendorf.bukkit.quickclaims;
+package net.moltendorf.Bukkit.RegionGuard;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.World;
@@ -10,12 +10,12 @@ import java.util.*;
  * Created by moltendorf on 14/10/11.
  */
 public class PlayerStore {
-	final protected Plugin plugin;
+	final protected RegionGuard plugin;
 
 	final protected Map<UUID, Map<String, Set<UUID>>> serverPlayers = new LinkedHashMap<>();
-	final protected Map<UUID, PlayerData> playerRegions = new LinkedHashMap<>();
+	final protected Map<UUID, PlayerData>             playerRegions = new LinkedHashMap<>();
 
-	public PlayerStore(Plugin instance) {
+	public PlayerStore(RegionGuard instance) {
 		plugin = instance;
 	}
 
