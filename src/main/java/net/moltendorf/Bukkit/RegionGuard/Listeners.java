@@ -22,6 +22,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Listener register.
@@ -36,6 +38,7 @@ public class Listeners implements Listener {
 
 	final protected PlayerStore players;
 	final protected Set<String> regions = new HashSet<>();
+	private final   Pattern     pattern = Pattern.compile("__path-([nesw]{1,2})([0-9]+)([jp])");
 
 	protected Listeners(final RegionGuard instance) {
 		plugin = instance;
@@ -65,6 +68,24 @@ public class Listeners implements Listener {
 				flagPlayerForRegion(player, region, world);
 			}
 		}
+	}
+
+	protected String direction(final char cardinal) {
+		switch (cardinal) {
+			case 'n':
+				return "North";
+
+			case 'e':
+				return "East";
+
+			case 's':
+				return "South";
+
+			case 'w':
+				return "West";
+		}
+
+		return null;
 	}
 
 	protected void playerEnteredRegion(Player player, ProtectedRegion region, World world) {
@@ -348,151 +369,161 @@ public class Listeners implements Listener {
 			String id = region.getId();
 
 		check:
-			if (id.length() > 1 && (message == null || (first && message.startsWith("&r")))) {
-				message = "&r&8[&b ";
-
-				switch (id.charAt(0)) {
-					case 'n':
-						message += "North";
-						break;
-
-					case 'e':
-						message += "East";
-						break;
-
-					case 's':
-						message += "South";
-						break;
-
-					case 'w':
-						message += "West";
-						break;
-
-					default:
-						break check;
-
-				}
-
-				switch (id.charAt(id.length() - 1)) {
-					case 'p':
-						if (id.length() > 3) {
-							switch (id.charAt(1)) {
-								case 'n':
-									message += " to North";
-									break;
-
-								case 'e':
-									message += " to East";
-									break;
-
-								case 's':
-									message += " to South";
-									break;
-
-								case 'w':
-									message += " to West";
-									break;
-
-								default:
-									break check;
-							}
-
-							message += " at " + id.substring(2, id.length() - 1);
-						} else if (id.length() > 2) {
-							break check;
-						}
-
-						message += " Path";
-						break;
-
-					case 'c':
-						if (id.length() > 3) {
-							switch (id.charAt(1)) {
-								case 'n':
-									message += " North";
-									break;
-
-								case 'e':
-									message += " East";
-									break;
-
-								case 's':
-									message += " South";
-									break;
-
-								case 'w':
-									message += " West";
-									break;
-
-								default:
-									break check;
-							}
-
-							String coordinates = id.substring(2, id.length() - 1);
-
-							message += " " + coordinates + " to " + (new Integer(coordinates)*2) + " Connector";
-						} else {
-							break check;
-						}
-						break;
-
-					default:
-						break check;
-				}
-
-				message += " &8]";
-
+			if (first && id.startsWith("__")) {
 				CommandSender sender = plugin.getServer().getConsoleSender();
 				WorldGuardPlugin wg = WGBukkit.getPlugin();
 
+				/*
+				 * Check type of public region.
+				 */
+
+				final Matcher matcher = pattern.matcher(id);
+
+				if (matcher.matches()) {
+
+				/*
+				 * Update greeting.
+				 */
+
+				message:
+					if (message == null || message.startsWith("&r")) {
+						message = "&r&8[&b ";
+
+						final String cardinals = matcher.group(1);
+
+						message += direction(cardinals.charAt(0));
+
+						final boolean path = matcher.group(3).equals("p");
+
+						if (cardinals.length() == 2) {
+							if (path) {
+								message += "ern " + direction(cardinals.charAt(1));
+							}
+
+							message += " at " + matcher.group(2);
+						} else {
+							if (path) {
+								message += " to " + matcher.group(2);
+							} else {
+								message += " at " + matcher.group(2);
+							}
+						}
+
+						if (path) {
+							message += " Path";
+						} else {
+							message += " Junction";
+						}
+
+						message += " &8]";
+
+						try {
+							region.setFlag(DefaultFlag.GREET_MESSAGE, DefaultFlag.GREET_MESSAGE.parseInput(wg, sender, message));
+						} catch (InvalidFlagFormat invalidFlagFormat) {
+							invalidFlagFormat.printStackTrace();
+						}
+					}
+				} else {
+					break check;
+				}
+
+				// Tweak priority.
+				region.setPriority(100);
+
+				// Make sure administrators and moderators are members.
+				DefaultDomain members = region.getMembers();
+
+				members.addGroup("su");
+				members.addGroup("moderator");
+
+				region.setMembers(members);
+
+				/*
+				 * Make sure people don't starve together.
+				 */
+
 				try {
-					region.setFlag(DefaultFlag.GREET_MESSAGE, DefaultFlag.GREET_MESSAGE.parseInput(wg, sender, message));
+					final Integer flag = region.getFlag(DefaultFlag.FEED_AMOUNT);
+
+					if (flag == null || flag != 1) {
+						region.setFlag(DefaultFlag.FEED_AMOUNT, DefaultFlag.FEED_AMOUNT.parseInput(wg, sender, "1"));
+					}
 				} catch (InvalidFlagFormat invalidFlagFormat) {
 					invalidFlagFormat.printStackTrace();
 				}
 
-				if (first) {
-					// Tweak priority.
-					region.setPriority(2);
+				try {
+					final Integer flag = region.getFlag(DefaultFlag.FEED_DELAY);
 
-					// Make sure administrators and moderators are members.
-					DefaultDomain members = region.getMembers();
-
-					members.addGroup("sudo");
-					members.addGroup("moderator");
-
-					region.setMembers(members);
-
-					// Make sure people don't starve together.
-					try {
-						final Integer flag = region.getFlag(DefaultFlag.FEED_AMOUNT);
-
-						if (flag == null || flag != 1) {
-							region.setFlag(DefaultFlag.FEED_AMOUNT, DefaultFlag.FEED_AMOUNT.parseInput(wg, sender, "1"));
-						}
-					} catch (InvalidFlagFormat invalidFlagFormat) {
-						invalidFlagFormat.printStackTrace();
+					if (flag == null || flag != 1) {
+						region.setFlag(DefaultFlag.FEED_DELAY, DefaultFlag.FEED_DELAY.parseInput(wg, sender, "1"));
 					}
+				} catch (InvalidFlagFormat invalidFlagFormat) {
+					invalidFlagFormat.printStackTrace();
+				}
 
-					try {
-						final Integer flag = region.getFlag(DefaultFlag.FEED_DELAY);
+				try {
+					final Integer flag = region.getFlag(DefaultFlag.MAX_FOOD);
 
-						if (flag == null || flag != 1) {
-							region.setFlag(DefaultFlag.FEED_DELAY, DefaultFlag.FEED_DELAY.parseInput(wg, sender, "1"));
-						}
-					} catch (InvalidFlagFormat invalidFlagFormat) {
-						invalidFlagFormat.printStackTrace();
+					if (flag == null || flag != 8) {
+						region.setFlag(DefaultFlag.MAX_FOOD, DefaultFlag.MAX_FOOD.parseInput(wg, sender, "8"));
 					}
+				} catch (InvalidFlagFormat invalidFlagFormat) {
+					invalidFlagFormat.printStackTrace();
+				}
 
-					try {
-						final Integer flag = region.getFlag(DefaultFlag.MAX_FOOD);
+				/*
+				 * Protect the path from everything.
+				 */
 
-						if (flag == null || flag != 8) {
-							region.setFlag(DefaultFlag.MAX_FOOD, DefaultFlag.MAX_FOOD.parseInput(wg, sender, "8"));
-						}
-					} catch (InvalidFlagFormat invalidFlagFormat) {
-						invalidFlagFormat.printStackTrace();
+				try {
+					final StateFlag.State flag = region.getFlag(DefaultFlag.CREEPER_EXPLOSION);
+
+					if (flag == null || !flag.toString().equals("DENY")) {
+						region.setFlag(DefaultFlag.CREEPER_EXPLOSION, DefaultFlag.CREEPER_EXPLOSION.parseInput(wg, sender, "DENY"));
 					}
+				} catch (InvalidFlagFormat invalidFlagFormat) {
+					invalidFlagFormat.printStackTrace();
+				}
+
+				try {
+					final StateFlag.State flag = region.getFlag(DefaultFlag.ENDERDRAGON_BLOCK_DAMAGE);
+
+					if (flag == null || !flag.toString().equals("DENY")) {
+						region.setFlag(DefaultFlag.ENDERDRAGON_BLOCK_DAMAGE, DefaultFlag.ENDERDRAGON_BLOCK_DAMAGE.parseInput(wg, sender, "DENY"));
+					}
+				} catch (InvalidFlagFormat invalidFlagFormat) {
+					invalidFlagFormat.printStackTrace();
+				}
+
+				try {
+					final StateFlag.State flag = region.getFlag(DefaultFlag.ENDER_BUILD);
+
+					if (flag == null || !flag.toString().equals("DENY")) {
+						region.setFlag(DefaultFlag.ENDER_BUILD, DefaultFlag.ENDER_BUILD.parseInput(wg, sender, "DENY"));
+					}
+				} catch (InvalidFlagFormat invalidFlagFormat) {
+					invalidFlagFormat.printStackTrace();
+				}
+
+				try {
+					final StateFlag.State flag = region.getFlag(DefaultFlag.GHAST_FIREBALL);
+
+					if (flag == null || !flag.toString().equals("DENY")) {
+						region.setFlag(DefaultFlag.GHAST_FIREBALL, DefaultFlag.GHAST_FIREBALL.parseInput(wg, sender, "DENY"));
+					}
+				} catch (InvalidFlagFormat invalidFlagFormat) {
+					invalidFlagFormat.printStackTrace();
+				}
+
+				try {
+					final StateFlag.State flag = region.getFlag(DefaultFlag.OTHER_EXPLOSION);
+
+					if (flag == null || !flag.toString().equals("DENY")) {
+						region.setFlag(DefaultFlag.OTHER_EXPLOSION, DefaultFlag.OTHER_EXPLOSION.parseInput(wg, sender, "DENY"));
+					}
+				} catch (InvalidFlagFormat invalidFlagFormat) {
+					invalidFlagFormat.printStackTrace();
 				}
 			}
 
