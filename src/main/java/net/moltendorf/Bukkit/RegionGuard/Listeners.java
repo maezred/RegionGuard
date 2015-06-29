@@ -395,9 +395,15 @@ public class Listeners implements Listener {
 
 						final boolean path = matcher.group(3).equals("p");
 
+						if (!path && !matcher.group(3).equals("j")) {
+							break message;
+						}
+
 						if (cardinals.length() == 2) {
 							if (path) {
 								message += "ern " + direction(cardinals.charAt(1));
+							} else {
+								message += " " + direction(cardinals.charAt(1));
 							}
 
 							message += " at " + matcher.group(2);
