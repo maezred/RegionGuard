@@ -537,6 +537,20 @@ public class Listeners implements Listener {
 				} catch (InvalidFlagFormat invalidFlagFormat) {
 					invalidFlagFormat.printStackTrace();
 				}
+
+				/*
+				 * Deny mob spawning.
+				 */
+
+				try {
+					final StateFlag.State flag = region.getFlag(DefaultFlag.MOB_SPAWNING);
+
+					if (flag == null || !flag.toString().equals("DENY")) {
+						region.setFlag(DefaultFlag.MOB_SPAWNING, DefaultFlag.MOB_SPAWNING.parseInput(wg, sender, "DENY"));
+					}
+				} catch (InvalidFlagFormat invalidFlagFormat) {
+					invalidFlagFormat.printStackTrace();
+				}
 			}
 
 			UUID playerID = player.getUniqueId();
