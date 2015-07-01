@@ -430,7 +430,13 @@ public class Listeners implements Listener {
 						}
 					}
 				} else {
-					break check;
+					switch (id) {
+						case "__center":
+							break;
+
+						default:
+							break check;
+					}
 				}
 
 				// Tweak priority.
