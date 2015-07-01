@@ -6,7 +6,7 @@
 
 	<groupId>net.moltendorf.Bukkit</groupId>
 	<artifactId>RegionGuard</artifactId>
-	<version>1.8.2</version>
+	<version>1.8.4</version>
 
 	<name>${artifactId}</name>
 	<description>Protecting your regions.</description>
